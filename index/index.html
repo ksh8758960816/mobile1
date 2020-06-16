@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대구,경북 안심 병원</title>
+</head>
+<style>
+    body {
+        background-color: #0537db;
+        height: 100%;
+    }
+
+    .login-page {
+        width: 400px;
+        padding: 15% 0 0;
+        margin: auto;
+    }
+
+    .form {
+        position: relative;
+        z-index: 1;
+        background: #FFFFFF;
+        max-width: 360px;
+        padding: 45px;
+        margin: 0 auto 100px;
+        text-align: center;
+        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    }
+
+    .form input {
+        font-family: "Roboto", sans-serif;
+        outline: 0;
+        background: #f2f2f2;
+        width: 85%;
+        float: right;
+        border: 0;
+        margin: 0 0 15px;
+        padding: 15px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .form button {
+        font-family: "Roboto", sans-serif;
+        outline: 0;
+        background: #0537db;
+        width: 100%;
+        border: 0;
+        padding: 15px;
+        color: #FFFFFF;
+        font-size: 14px;
+        -webkit-transition: all 0.3 ease;
+        transition: all 0.3 ease;
+        cursor: pointer;
+    }
+
+    .form button:hover,
+    .form button:active,
+    .form button:focus {
+        background: #0537db;
+    }
+
+    .form .message {
+        margin: 15px 0 0;
+        color: #b3b3b3;
+        font-size: 12px;
+    }
+
+    .form .message a {
+        color: #313531;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .form .message a:hover {
+        color: #313531;
+        text-decoration: underline;
+        font-weight: bold;
+    }
+
+    .form .register-form {
+        display: none;
+    }
+
+    .left {
+        width: 15%;
+        float: left;
+        padding-top: 10px;
+        padding-bottom: 17px;
+    }
+</style>
+
+<body>
+    <nav
+        style="position: absolute; top: 0; width: 100%; height: 70px;  margin:0; z-index: 5000; background: white; text-align: center;">
+        <div style="height: 60px; padding: 7px; padding-top: 0px;">
+            <img src="images/title.png" style="height: 60px; padding: 7px;">
+        </div>
+        <img style=" width: 40px; height: 40px; padding: 3px; left: 5px; top: 10px; position: absolute; border: none;" src="images/hospital.png">
+        <img style=" width: 40px; height: 40px; padding: 3px; right: 5px; top: 10px; position: absolute; border: none;" src="images/dggb.png">
+
+    </nav>
+
+    <div class="login-page">
+        <div class="form">
+            <img src="images/logo2.png" style="width:100%;">
+            <h1 style="font-family:Geogia;">통합로그인</h1>
+            <form class="login-form">
+                <img class="left" src="images/login1.png" style="width:25px; height:30px;"><input type="text"
+                    placeholder="아이디" autofocus="autofocus" />
+                <img class="left" src="images/password.png" style="width:25px; height:30px;"><input type="password"
+                    placeholder="비밀번호" />
+                <button>로그인</button>
+                <p class="message">아이디가 없으십니까? <a href="main.html" style="font-family: sans-serif;">비회원 로그인 하기</a></p>
+            </form>
+        </div>
+
+    </div>
+</body>
+
+</html>

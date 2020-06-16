@@ -1,0 +1,534 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>대구,경북 안심 병원</title>
+    <script
+        src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=b8783f7a033d07cf1c28762a5971a927&libraries=services"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js'></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js'></script>
+    <script src="js/jquery.bpopup.js"></script>
+    <script src="js/jquery.bpopup.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css">
+    <script src="https://favprw.tistory.com/attachment/cfile24.uf@992D4F505E183472019BF9.js"></script>
+    <style type="text/css">
+        #hospital_info_detail {
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .overay_info {
+            position: relative;
+            background-color: transparent;
+            background-image: url("images/title2.png");
+            background-size: 100% 100%;
+            padding: 10px 10px 20px 10px;
+            background-repeat: no-repeat;
+            z-index: 6000;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .overay_info .tail {
+            left: 50%;
+            margin-left: -18px;
+            border-right: 18px solid transparent;
+            border-top: 18px solid #66aa11;
+            border-left: 18px solid transparent;
+            position: absolute;
+            bottom: -18px;
+            width: 0;
+            height: 0;
+            z-index: 5000;
+        }
+
+        .place_name {
+            background-color: transparent;
+            color: #000;
+            padding: 5px;
+        }
+
+        #current_location {
+            box-shadow: 2px 1px 5px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltipped {
+            border: none;
+            background: white;
+            color: #75b79e;
+            size: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map" style="width:100%;height:100%;">
+        <nav
+            style="position: absolute; top: 0; width: 100%; height: 70px; padding: 0 10px 0 10px; margin:0; z-index: 5000; background: #0537db; text-align: center;">
+            <div style="height: 60px; padding: 7px; padding-top: 0px;">
+                <img src="images/title.png" style="height: 60px; padding: 7px; padding-top:11px;">
+            </div>
+            <button id="info"
+                style="background: rgba(255, 255, 255, 0); left: 5px; top: 10px; position: absolute; border: none;"><img
+                    style=" width: 40px; height: 40px; padding: 3px;" src="images/help_white.png"></button>
+            <button id="navi"
+                style="background: rgba(255, 255, 255, 0); right: 5px; top: 10px; position: absolute; border: none;"><a
+                    href="https://map.kakao.com/"><img style=" width: 40px; height: 40px; padding: 3px;"
+                        src="images/kakaomap.png"></a></button>
+        </nav>
+        <!-- 현재위치로 이동시켜주는 button -->
+        <button id="current_location"
+            style="text-align: center; position: absolute; left: 3%; top: 140px; width: 0; height: 0; max-height: 40px; max-width: 40px; border-radius: 50%; z-index: 999; background: rgb(255, 255, 255); border: none;">
+            <img style="width: 30px; height: 30px;" src="images/gps2.png" alt=""></button>
+        <!-- 병원 정보 창을 띄우는 div -->
+        <div id="hostpital_info_detail"
+            style="position: absolute; display: none; background: white; padding: 13px; width: 100%; height: auto; bottom: 0; right: 0; left: 0; z-index: 5000;">
+            <button id="hostpital_detail_close" style="float: right; border: none; background: #fff;"><img
+                    src="images/close.png" alt="" style=""></button>
+            <p style="font-size: 20px; padding: 5px;"><b id="place_detail_name"></b></p>
+            <p style="font-size: 17px;"><img src="images/place_gray.png" style="width: 30px;"><b
+                    id="place_detail_addr"></b></p>
+            <p id="place_detail_type"></p>
+            <p id="place_detail_tel"></p>
+        </div>
+
+
+    </div>
+
+    <div id="infoPopup" class="popup-div popup-style"
+        style="background: #fff; position: absolute; z-index: 10000; padding: 20px; max-height: 90vh; max-width: 95vw; overflow-y: auto; margin-top: 50px; display: none;">
+        <button id="info_detail_close" style="float: right; border: none; background: #fff;"><img src="images/close.png"
+                alt="" style=""></button>
+        <div class="popupContent">
+            <div class="b-ajax-wrapper">
+                <div>
+                    <br>
+                    <p>버전: Beta 1.1</p>
+                    <p>기획 및 개발: 김승현</p>
+                    <p>학번: 15111042</p>
+                    <p>병원 정보: 공공데이터포털</p>
+                    <p>지도 및 검색기능: 카카오 지도 API</p>
+                    <p>※국민안심병원이란, 코로나19 걱정 없이 진료받을 수 있도록 호흡기 환자의 <br />병원 방문부터 입원까지 진료 전 과정을 분리해 진료하는 병원을 말한다.<br />
+                        의료기관 여건에 따라 호흡기 전용 외래를 분리해서 운영하거나(A형), 선별진료소· <br />호흡기 병동 등 입원실까지 운영(B형)하는 유형으로 나뉜다. </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        var markers = []; // 지도에 표시된 마커 객체를 가지고 있을 배열입니다
+        var contents = [];
+        var overlays = [];
+        var infowindow;
+        var clickedOverlay = null;
+
+        var listData = [
+            {
+                addr: '대구광역시 남구 현충로 170',
+                title: '영남대학교병원',
+                type: '외래진료',
+                tel: '053-623-8001'
+            },
+            {
+                addr: '대구광역시 남구 대명로 153',
+                title: '드림병원',
+                type: '외래진료 및 입원',
+                tel: '053-640-8800'
+            },
+            {
+                addr: '대구광역시 달서구 감삼북길 141',
+                title: '구병원',
+                type: '외래진료',
+                tel: '053-560-9114'
+            },
+            {
+                addr: '대구광역시 달서구 월배로 446',
+                title: '삼일병원',
+                type: '외래진료 및 입원',
+                tel: '053-659-3100'
+            },
+            {
+                addr: '대구광역시 달서구 월배로 97',
+                title: '나사렛종합병원',
+                type: '외래진료',
+                tel: '053-643-1400'
+            },
+            {
+                addr: '대구광역시 달서구 구마로 128',
+                title: '대구보광병원',
+                type: '외래진료',
+                tel: '053-651-3232'
+            },
+            {
+                addr: '대구광역시 달서구 월배로 404',
+                title: '참조은병원',
+                type: '외래진료',
+                tel: '053-630-8000'
+            },
+            {
+                addr: '대구광역시 달서구 구마로 220',
+                title: '세강병원',
+                type: '외래진료',
+                tel: '053-620-6248'
+            },
+            {
+                addr: '대구광역시 동구 아양로99',
+                title: '대구파티마병원',
+                type: '외래진료',
+                tel: '053-1688-7770'
+            },
+            {
+                addr: '대구광역시 북구 칠곡중앙대로440',
+                title: '대구가톨릭대학교칠곡가톨릭병원',
+                type: '외래진료',
+                tel: '053-320-2500'
+            },
+            {
+                addr: '대구광역시 서구 국채보상로 200',
+                title: '서대구병원',
+                type: '외래진료',
+                tel: '053-558-5800'
+            },
+            {
+                addr: '대구광역시 수성구 달구벌대로 3190',
+                title: '천주성삼병원',
+                type: '외래진료',
+                tel: '053-790-1000'
+            },
+            {
+                addr: '대구광역시 중구 동덕로 130',
+                title: '경북대학교병원',
+                type: '외래진료',
+                tel: '053-420-5114'
+            },
+            {
+                addr: '대구광역시 중구 국채보상로 531',
+                title: '곽병원',
+                type: '외래진료',
+                tel: '053-252-2401'
+            },
+            {
+                addr: '대구광역시 중구 태평로 102',
+                title: '푸른병원',
+                type: '외래진료',
+                tel: '053-471-2800'
+            },
+            {
+                addr: '대구광역시 중구 국채보상로 648',
+                title: '우리들병원',
+                type: '외래진료',
+                tel: '053-212-3000'
+            },
+            {
+                addr: '경상북도 경산시 경안로 11',
+                title: '경산중앙병원',
+                type: '외래진료',
+                tel: '053-715-0100'
+            },
+            {
+                addr: '경상북도 경산시 경안로 208',
+                title: '세명병원',
+                type: '외래진료',
+                tel: '053-819-8364'
+            },
+            {
+                addr: '경상북도 경주시 동대로87',
+                title: '동국대학교 경주병원',
+                type: '외래진료',
+                tel: '054-748-9300'
+            },
+            {
+                addr: '경상북도 구미시 신시로10길 12',
+                title: '차의과학대학교부속구미차병원',
+                type: '외래진료',
+                tel: '054-450-9700'
+            },
+            {
+                addr: '경상북도 구미시 1공단로 179',
+                title: '순천향대학교부속구미병원',
+                type: '외래진료',
+                tel: '054-468-9114'
+            },
+            {
+                addr: '경상북도 구미시 역전로 28',
+                title: '바른유병원',
+                type: '외래진료',
+                tel: '054-457-8676'
+            },
+            {
+                addr: '경상북도 김천시 신음1길 12',
+                title: '김천제일병원',
+                type: '외래진료',
+                tel: '054-420-9300'
+            },
+            {
+                addr: '경상북도 문경시 당교3길 25',
+                title: '문경제일병원',
+                type: '외래진료',
+                tel: '054-550-7700'
+            },
+            {
+                addr: '경상북도 상주시 상서문로 53',
+                title: '상주적십자병원',
+                type: '외래진료',
+                tel: '054-534-3501'
+            },
+            {
+                addr: '경상북도 상주시 냉림서성길7',
+                title: '상주성모병원',
+                type: '외래진료',
+                tel: '054-532-5001'
+            },
+            {
+                addr: '경상북도 안동시 서동문로99',
+                title: '안동성소병원',
+                type: '외래진료',
+                tel: '054-850-8114'
+            },
+            {
+                addr: '경상북도 안동시 앙실로11',
+                title: '안동병원',
+                type: '외래진료',
+                tel: '054-840-1004'
+            },
+            {
+                addr: '경상북도 영주시 대학로 327',
+                title: '영주적십자병원',
+                type: '외래진료',
+                tel: '054-630-0100'
+            },
+            {
+                addr: '경상북도 포항시 남구 대잠동길 17',
+                title: '포항성모병원',
+                type: '외래진료',
+                tel: '054-272-0151'
+            },
+            {
+                addr: '경상북도 포항시 남구 남구 포스코대로351',
+                title: '포항세명기독병원',
+                type: '외래진료 및 입원',
+                tel: '054-275-0005'
+            },
+            {
+                addr: '경상북도 포항시 남구 희망대로 352',
+                title: '에스포항병원',
+                type: '외래진료',
+                tel: '054-289-9000'
+            },
+            {
+                addr: '경상북도 포항시 북구 대신로 43',
+                title: '좋은선린병원',
+                type: '외래진료',
+                tel: '054-245-5000'
+            },
+            {
+                addr: '경상북도 포항시 북구 포스코대로 256',
+                title: '포항우리병원',
+                type: '외래진료',
+                tel: '054-240-6000'
+            }
+        ];
+
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+            mapOption = {
+                center: new daum.maps.LatLng(35.913615, 128.802959), // 지도의 중심좌표
+                level: 9 // 지도의 확대 레벨
+            };
+
+
+        // 맵 표시
+        var map = new daum.maps.Map(mapContainer, mapOption);
+
+        // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+        var zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
+
+        // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+        var mapTypeControl = new kakao.maps.MapTypeControl();
+        map.addControl(mapTypeControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
+
+        getCurrentLocation();
+
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+                navigator.geolocation.getCurrentPosition(function (position) {
+
+                    lat = position.coords.latitude; // 위도
+                    lon = position.coords.longitude; // 경도
+
+                    if (lat == null)
+                        alert('GPS가 사용가능한지 확인해주세요!');
+
+                    var locPosition = new kakao.maps.LatLng(lat, lon);
+                    var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png", // 마커이미지의 주소입니다    
+                        imageOption = { offset: new kakao.maps.Point(31, 59) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                    var CrimageSize = new kakao.maps.Size(24, 35);
+
+
+                    // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                    var markerImage = new kakao.maps.MarkerImage(imageSrc, CrimageSize),
+                        markerPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치입니다
+
+                    // 마커를 생성합니다
+                    var current_marker = new kakao.maps.Marker({
+                        position: markerPosition,
+                        image: markerImage // 마커이미지 설정 
+                    });
+
+                    // 마커가 지도 위에 표시되도록 설정합니다
+                    current_marker.setMap(map);
+
+                    var CR_content = '<div class="overay_info"><div class="place_name"><span><h4><b> 내 위치 </b></h4></span></div></div>';
+                    // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+
+                    var CR_customOverlay = new kakao.maps.CustomOverlay({
+                        position: markerPosition,
+                        content: CR_content,
+                        yAnchor: 1.4
+                    });
+                    CR_customOverlay.setMap(map);
+
+                    // 지도 중심좌표를 접속위치로 변경합니다
+                    map.panTo(locPosition);
+
+                    HSearch(lat, lon);
+
+                });
+
+            } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+                alert('GPS가 사용가능한지 확인해주세요!');
+            }
+
+        }
+        $("#current_location").click(function () {
+            if (lat != null) {
+                map.panTo(new kakao.maps.LatLng(lat, lon));
+                HSearch(lat, lon);
+            } else {
+                getCurrentLocation();
+            }
+        });
+
+        $("#info").on('click', function (event) {
+            event.preventDefault();
+            $("#infoPopup").bPopup({
+                easing: 'easeOutput'
+            });
+        });
+        $('#info_detail_close').click(function () {
+            $("#infoPopup").bPopup().close();
+        });
+
+        // 주소 -> 좌표 변환 라이브러리        
+        var geocoder = new daum.maps.services.Geocoder();
+
+        var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', // 마커이미지의 주소입니다    
+            imageSize = new kakao.maps.Size(64, 69), // 마커이미지의 크기입니다
+            imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.    
+
+
+
+        // foreach loop
+        listData.forEach(function (v, i) {
+            var geocoder = new kakao.maps.services.Geocoder();
+            var bounds = new kakao.maps.LatLngBounds();
+            geocoder.addressSearch(listData[i].addr, function (result, status) {
+                // 정상적으로 검색이 완료됐으면 
+                if (status === kakao.maps.services.Status.OK) {
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+
+                    var marker = new daum.maps.Marker({
+                        map: map,
+                        position: coords,
+                        // image: markerImage,
+                        clickable: true
+                    });
+
+                    markers = marker;
+
+                    var iwContent = '<div class="overay_info"><div class="place_name"><button onclick="showDetailInfo(\'' + listData[i].title + '\', \'' + listData[i].addr + '\', \'' + listData[i].type + '\', \'' + listData[i].tel + '\');" style="border:none; background: rgba(255, 255, 255, 0);"><span><h4><b>' +
+                        listData[i].title +
+                        '</b><img src="images/right.png" style="width:17px; margin-left: 10px; padding-bottom:7px"></h4></span></button></div></div>';
+                    // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+
+                    var customOverlay = new kakao.maps.CustomOverlay({
+                        position: coords,
+                        content: iwContent,
+                        yAnchor: 1.4
+                    });
+
+
+
+                    kakao.maps.event.addListener(markers, 'click', function () {
+                        if (clickedOverlay) {
+                            console.log(clickedOverlay);
+                            clickedOverlay.setMap(null);
+                        }
+                        // 마커 위에 인포윈도우를 표시합니다
+                        customOverlay.setMap(map);
+                        clickedOverlay = customOverlay;
+
+                        var pos = marker.getPosition();
+                        console.log(pos);
+                        map.panTo(pos);
+                    });
+
+
+                    $("#hostpital_detail_close").click(function () {
+                        $('#hostpital_info_detail').slideUp("fast");
+                    });
+
+                }
+            });
+        });
+
+        function showDetailInfo(place_name, place_addr, place_type, place_tel) {
+            document.getElementById("place_detail_name").innerHTML = place_name;
+            document.getElementById("place_detail_addr").innerHTML = "&nbsp;&nbsp;&nbsp;" + place_addr + '&nbsp;&nbsp;&nbsp;&nbsp;<button class="copy btn tooltipped tooltipped-s" data-clipboard-text="' + place_addr + '">주소복사</button>';
+            document.getElementById("place_detail_type").innerHTML = '신청유형:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + place_type;
+            document.getElementById("place_detail_tel").innerHTML = '전화번호:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + place_tel;
+            $('#hostpital_info_detail').slideDown("fast");
+        }
+
+        var clipboard = new Clipboard('.copy');
+        clipboard.on('success', function (e) {
+            e.clearSelection();
+            showTooltip(e.trigger, '복사됨!');
+        });
+
+        function showTooltip(elem, msg) {
+            elem.setAttribute('class', 'btn tooltipped tooltipped-s');
+            elem.setAttribute('aria-label', msg);
+        }
+
+        // 클립보드로 복사하는 기능을 생성
+        function copyToClipboard(elementId) {
+            // 글을 쓸 수 있는 란을 만든다.
+            var aux = document.createElement("input");
+            // 지정된 요소의 값을 할당 한다.
+            aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+            // bdy에 추가한다.
+            document.body.appendChild(aux);
+            // 지정된 내용을 강조한다.
+            aux.select();
+            // 텍스트를 카피 하는 변수를 생성
+            document.execCommand("copy");
+            // body 로 부터 다시 반환 한다.
+            document.body.removeChild(aux);
+        }
+
+
+
+    </script>
+</body>
+
+</html>
